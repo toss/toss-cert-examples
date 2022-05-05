@@ -43,14 +43,11 @@ public class JavaExampleTest {
     @Test
     public void testEncryptDecryptData() throws Exception {
         for (String[] data : AES_TEST_DATA) {
-            String sessionKey = data[0];
-            String plain = data[1];
-            String encrypted = data[2];
-
-            String sessionId = sessionKey.split("\\$")[1];
-            String[] decryptedSessionFields = decryptSessionKey(TEST_BASE64_PRIVATE_KEY, sessionKey.split("\\$")[2]).split("\\$");
-            String secretKey = decryptedSessionFields[1];
-            String iv = decryptedSessionFields[2];
+            String sessionId = data[0];
+            String secretKey = data[1];
+            String iv = data[2];
+            String plain = data[3];
+            String encrypted = data[4];
 
             String encryptedData = encryptData(sessionId, secretKey, iv, plain);
             String decryptedData = decryptData(secretKey, iv, encrypted);

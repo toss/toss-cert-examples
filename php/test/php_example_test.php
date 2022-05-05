@@ -17,7 +17,7 @@ function testDecryptSessionKey()
     global $RSA_TEST_DATA;
     global $TEST_BASE64_PRIVATE_KEY;
 
-    for ($i = 1; $i <= 5; $i++) {
+    for ($i = 1; $i <= 3; $i++) {
         $data = $RSA_TEST_DATA[array_rand($RSA_TEST_DATA)];
 
         $secretKey = $data[1];
@@ -36,7 +36,7 @@ function testGenerateSessionKey()
     global $TEST_BASE64_PUBLIC_KEY;
     global $TEST_BASE64_PRIVATE_KEY;
 
-    for ($i = 1; $i <= 5; $i++) {
+    for ($i = 1; $i <= 3; $i++) {
         $data = $RSA_TEST_DATA[array_rand($RSA_TEST_DATA)];
 
         $sessionId = $data[0];
@@ -57,17 +57,13 @@ function testGenerateSessionKey()
 function testEncryptDecryptData()
 {
     global $AES_TEST_DATA;
-    global $TEST_BASE64_PRIVATE_KEY;
 
     foreach ($AES_TEST_DATA as $data) {
-        $sessionKey = $data[0];
-        $plain = $data[1];
-        $encrypted = $data[2];
-
-        $sessionId = explode('$', $sessionKey)[1];
-        $decryptedSessionFields = explode('$', decryptSessionKey($TEST_BASE64_PRIVATE_KEY, explode('$', $sessionKey)[2]));
-        $secretKey = $decryptedSessionFields[1];
-        $iv = $decryptedSessionFields[2];
+        $sessionId = $data[0];
+        $secretKey = $data[1];
+        $iv = $data[2];
+        $plain = $data[3];
+        $encrypted = $data[4];
 
         $encryptedData = encryptData($sessionId, $secretKey, $iv, $plain);
         $decryptedData = decryptData($secretKey, $iv, $encrypted);

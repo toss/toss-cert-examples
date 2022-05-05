@@ -11,6 +11,8 @@
 ## AES 테스트 데이터
 
 컬럼 순서
-- sessionKey
+- sessionId
+- secretKey
+- iv
 - plain
 - encrypted
