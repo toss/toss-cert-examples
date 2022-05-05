@@ -63,10 +63,10 @@ public class JavaExampleSdkTest {
             this.version = fields[0];
             this.sessionId = fields[1];
 
-            String[] decryptedFields = decryptSessionKey(TEST_BASE64_PRIVATE_KEY, fields[2]).split("\\$");
-            this.algorithm = decryptedFields[0];
-            this.secretKey = decryptedFields[1];
-            this.iv = decryptedFields[2];
+            String[] decryptedSessionFields = decryptSessionKey(TEST_BASE64_PRIVATE_KEY, fields[2]).split("\\$");
+            this.algorithm = decryptedSessionFields[0];
+            this.secretKey = decryptedSessionFields[1];
+            this.iv = decryptedSessionFields[2];
         }
 
         @Override
