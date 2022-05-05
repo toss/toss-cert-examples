@@ -1,39 +1,100 @@
 <?php
 
 require_once '../vendor/autoload.php';
+
+include "../src/functions.php";
 include "test_data.php";
 
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 
 testDecryptSessionKey();
+testGenerateSessionKey();
+testEncryptDecryptData();
 
 function testDecryptSessionKey()
 {
     global $RSA_TEST_DATA;
     global $TEST_BASE64_PRIVATE_KEY;
 
-    $data = $RSA_TEST_DATA[0];
+    for ($i = 1; $i <= 5; $i++) {
+        $data = $RSA_TEST_DATA[array_rand($RSA_TEST_DATA)];
 
-    $secretKey = $data[1];
-    $iv = $data[2];
-    $sessionKey = $data[3];
-    echo $secretKey, "\n";
-    echo $iv, "\n";
-    echo $sessionKey, "\n";
-    echo explode('$', $sessionKey)[2], "\n";
-    // echo base64_decode(explode('$', $sessionKey)[2]);
+        $secretKey = $data[1];
+        $iv = $data[2];
+        $sessionKey = $data[3];
+        $decryptedSessionKey = decryptSessionKey($TEST_BASE64_PRIVATE_KEY, explode('$', $sessionKey)[2]);
 
-    $decryptedSessionKey = decryptSessionKey($TEST_BASE64_PRIVATE_KEY, explode('$', $sessionKey)[2]);
-    echo $decryptedSessionKey . "\n";
+        echo $decryptedSessionKey . "\n";
+        assertEquals('AES_GCM$' . $secretKey . '$' . $iv, $decryptedSessionKey);
+    }
+}
 
-//    foreach ($RSA_TEST_DATA as $data) {
-//
-//    }
+function testGenerateSessionKey()
+{
+    global $RSA_TEST_DATA;
+    global $TEST_BASE64_PUBLIC_KEY;
+    global $TEST_BASE64_PRIVATE_KEY;
+
+    for ($i = 1; $i <= 5; $i++) {
+        $data = $RSA_TEST_DATA[array_rand($RSA_TEST_DATA)];
+
+        $sessionId = $data[0];
+        $secretKey = $data[1];
+        $iv = $data[2];
+        $sessionKey = $data[3];
+        $generatedSessionKey = generateSessionKey($sessionId, $secretKey, $iv, $TEST_BASE64_PUBLIC_KEY);
+        $decryptedSessionKey = decryptSessionKey($TEST_BASE64_PRIVATE_KEY, explode('$', $sessionKey)[2]);
+
+        echo $generatedSessionKey . "\n";
+        echo $decryptedSessionKey . "\n";
+
+        assertEquals(substr($sessionKey, 0, 40), substr($generatedSessionKey, 0, 40));
+        assertEquals('AES_GCM$' . $secretKey . '$' . $iv, $decryptedSessionKey);
+    }
+}
+
+function testEncryptDecryptData()
+{
+    global $AES_TEST_DATA;
+    global $TEST_BASE64_PRIVATE_KEY;
+
+    foreach ($AES_TEST_DATA as $data) {
+        $sessionKey = $data[0];
+        $plain = $data[1];
+        $encrypted = $data[2];
+
+        $sessionId = explode('$', $sessionKey)[1];
+        $decryptedSessionFields = explode('$', decryptSessionKey($TEST_BASE64_PRIVATE_KEY, explode('$', $sessionKey)[2]));
+        $secretKey = $decryptedSessionFields[1];
+        $iv = $decryptedSessionFields[2];
+
+        $encryptedData = encryptData($sessionId, $secretKey, $iv, $plain);
+        $decryptedData = decryptData($secretKey, $iv, $encrypted);
+
+        echo $encryptedData . "\n";
+        echo $decryptedData . "\n";
+
+        assertEquals($encrypted, $encryptedData);
+        assertEquals($plain, $decryptedData);
+    }
+}
+
+function assertEquals($expected, $actual)
+{
+    if ($expected != $actual) {
+        echo "Expected: " . $expected . "\n";
+        echo "Actual: " . $actual . "\n";
+        throw new RuntimeException("Assertion failed");
+    }
 }
 
 function decryptSessionKey(string $base64PrivateKey, string $sessionKey): string
 {
-    $rsa = PublicKeyLoader::load($base64PrivateKey)->withPadding(RSA::ENCRYPTION_OAEP);
+    $rsa = PublicKeyLoader::load($base64PrivateKey)
+        ->withPadding(RSA::ENCRYPTION_OAEP)
+        ->withHash('sha256')
+        ->withMGFHash('sha1');
+
     return $rsa->decrypt(base64_decode($sessionKey));
 }

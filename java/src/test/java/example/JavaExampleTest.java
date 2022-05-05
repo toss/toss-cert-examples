@@ -52,7 +52,6 @@ public class JavaExampleTest {
             String secretKey = decryptedSessionFields[1];
             String iv = decryptedSessionFields[2];
 
-
             String encryptedData = encryptData(sessionId, secretKey, iv, plain);
             String decryptedData = decryptData(secretKey, iv, encrypted);
 
