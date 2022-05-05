@@ -31,6 +31,7 @@ public class JavaExample {
 
         // API 요청 파라미터에 넣어주세요.
         String sessionKey = generateSessionKey(sessionId, secretKey, iv, base64PublicKey);
+        System.out.println("sessionKey: " + sessionKey);
 
         /* ------------------------------ 3. 개인정보 암호화 ----------------------------- */
 
