@@ -34,7 +34,7 @@ public class JavaExample {
 
         /* ------------------------------ 3. 개인정보 암호화 ----------------------------- */
 
-        String userName = "소중한 개인정보 입니다";
+        String userName = "김토스";
         String encryptedUserName = encryptData(sessionId, secretKey, iv, userName); // 암호화된 개인 정보
         System.out.println("encryptedUserName: " + encryptedUserName);
 
@@ -59,7 +59,7 @@ public class JavaExample {
     }
 
     public static String generateSessionKey(String sessionId, String secretKey, String iv, String base64PublicKey) throws Exception {
-        String sessionAesKey = "AES_GCM" + "$" + secretKey + "$" + iv;
+        String sessionAesKey = "AES_GCM$" + secretKey + "$" + iv;
         String encryptedSessionAesKey = encryptSessionAesKey(base64PublicKey, sessionAesKey);
         return "v1$" + sessionId + "$" + encryptedSessionAesKey;
     }
