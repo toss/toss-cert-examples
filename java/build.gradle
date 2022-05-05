@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+group 'im.toss.cert.samples'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'commons-codec:commons-codec:1.15'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
+
+compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+test {
+    useJUnitPlatform()
+}
