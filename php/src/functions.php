@@ -16,9 +16,9 @@ function uuid(): string
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }
 
-function generateKey(int $aesKeyBitLength): string
+function generateRandomBytes(int $lengthInBits): string
 {
-    return base64_encode(random_bytes($aesKeyBitLength / 8));
+    return base64_encode(random_bytes($lengthInBits / 8));
 }
 
 function generateSessionKey(string $sessionId, string $secretKey, string $iv, string $base64PublicKey): string
@@ -32,7 +32,7 @@ function encryptSessionAesKey(string $base64PublicKey, string $sessionAesKey): s
 {
     $rsa = PublicKeyLoader::load($base64PublicKey)
         ->withPadding(RSA::ENCRYPTION_OAEP)
-        ->withHash('sha256')
+        ->withHash('sha1')
         ->withMGFHash('sha1');
 
     $bytePlain = $rsa->encrypt($sessionAesKey);

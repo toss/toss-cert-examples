@@ -4,8 +4,8 @@ include "functions.php";
 
 /* ------------------------------ 1. 암복호화 키 생성 --------------------------- */
 $sessionId = uuid();
-$secretKey = generateKey(256);
-$iv = generateKey(128);
+$secretKey = generateRandomBytes(256);
+$iv = generateRandomBytes(96);
 
 /* ------------------------------ 2. 세션키 생성 ------------------------------- */
 

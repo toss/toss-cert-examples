@@ -89,7 +89,7 @@ function decryptSessionKey(string $base64PrivateKey, string $sessionKey): string
 {
     $rsa = PublicKeyLoader::load($base64PrivateKey)
         ->withPadding(RSA::ENCRYPTION_OAEP)
-        ->withHash('sha256')
+        ->withHash('sha1')
         ->withMGFHash('sha1');
 
     return $rsa->decrypt(base64_decode($sessionKey));
