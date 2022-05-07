@@ -3,12 +3,10 @@ package example;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
@@ -21,8 +19,8 @@ public class JavaExample {
         /* ------------------------------ 1. 암복호화 키 생성 --------------------------- */
 
         String sessionId = UUID.randomUUID().toString();
-        String secretKey = generateKey(256);
-        String iv = generateKey(128);
+        String secretKey = generateRandomBytes(256);
+        String iv = generateRandomBytes(96);
 
         /* ------------------------------ 2. 세션키 생성 ------------------------------- */
 
@@ -53,10 +51,10 @@ public class JavaExample {
         }
     }
 
-    public static String generateKey(int aesKeyBitLength) throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(aesKeyBitLength, new SecureRandom());
-        return Base64.encodeBase64String(keyGenerator.generateKey().getEncoded());
+    public static String generateRandomBytes(int lengthInBits) {
+        byte[] bytes = new byte[lengthInBits / 8];
+        new SecureRandom().nextBytes(bytes);
+        return Base64.encodeBase64String(bytes);
     }
 
     public static String generateSessionKey(String sessionId, String secretKey, String iv, String base64PublicKey) throws Exception {
@@ -68,7 +66,7 @@ public class JavaExample {
     public static String encryptSessionAesKey(String base64PublicKey, String sessionAesKey) throws Exception {
         PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(Base64.decodeBase64(base64PublicKey)));
 
-        Cipher rsaCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+        Cipher rsaCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
         rsaCipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
         byte[] bytePlain = rsaCipher.doFinal(sessionAesKey.getBytes());
