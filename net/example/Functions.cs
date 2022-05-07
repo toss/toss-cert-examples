@@ -22,10 +22,10 @@ public class Functions
     public static string EncryptSessionAesKey(string base64PublicKey, string sessionAesKey)
     {
         var rsaCipher = new RSACryptoServiceProvider();
-        rsaCipher.ImportRSAPublicKey(Convert.FromBase64String(base64PublicKey), out _);
+        rsaCipher.ImportSubjectPublicKeyInfo(Convert.FromBase64String(base64PublicKey), out _);
 
         byte[] encrypted = rsaCipher.Encrypt(Encoding.UTF8.GetBytes(sessionAesKey), RSAEncryptionPadding.OaepSHA1);
-        return Encoding.UTF8.GetString(encrypted);
+        return Convert.ToBase64String(encrypted);
     }
 
     public static string EncryptData(string sessionId, string secretKey, string iv, string data)
