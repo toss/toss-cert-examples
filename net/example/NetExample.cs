@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Security.Cryptography;
-using System.Text;
+using static Functions;
 
 class NetExample
 {
@@ -9,8 +8,8 @@ class NetExample
         /* ------------------------------ 1. 암복호화 키 생성 --------------------------- */
 
         string sessionId = Guid.NewGuid().ToString();
-        string secretKey = GenerateKey(256);
-        string iv = GenerateKey(96);
+        string secretKey = GenerateRandomBytes(256);
+        string iv = GenerateRandomBytes(96);
 
         /* ------------------------------ 2. 세션키 생성 ------------------------------- */
 
@@ -40,66 +39,5 @@ class NetExample
         {
             Console.Error.WriteLine("암복호화 결과가 일치하지 않습니다.");
         }
-    }
-
-    public static string GenerateKey(int aesKeyBitLength)
-    {
-        byte[] random = new byte[aesKeyBitLength / 8];
-
-        using var randomGenerator = new RNGCryptoServiceProvider();
-        randomGenerator.GetNonZeroBytes(random);
-        return Convert.ToBase64String(random);
-    }
-
-    public static string GenerateSessionKey(string sessionId, string secretKey, string iv, string base64PublicKey)
-    {
-        string sessionAesKey = "AES_GCM$" + secretKey + "$" + iv;
-        string encryptedSessionAesKey = EncryptSessionAesKey(base64PublicKey, sessionAesKey);
-        return "v1$" + sessionId + "$" + encryptedSessionAesKey;
-    }
-
-    public static string EncryptSessionAesKey(string base64PublicKey, string sessionAesKey)
-    {
-        return "";
-    }
-
-    public static string EncryptData(string sessionId, string secretKey, string iv, string data)
-    {
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
-        byte[] ivBytes = Convert.FromBase64String(iv);
-
-        byte[] dataBytes = Encoding.UTF8.GetBytes(data);
-        byte[] encrypted = new byte[dataBytes.Length];
-        byte[] tag = new byte[16];
-
-        using var aesCipher = new AesGcm(secretKeyBytes);
-        aesCipher.Encrypt(ivBytes, dataBytes, encrypted, tag, secretKeyBytes);
-
-        byte[] combined = new byte[encrypted.Length + tag.Length];
-        Buffer.BlockCopy(encrypted, 0, combined, 0, encrypted.Length);
-        Buffer.BlockCopy(tag, 0, combined, encrypted.Length, tag.Length);
-
-        return "v1$" + sessionId + "$" + Convert.ToBase64String(combined); ;
-    }
-
-    public static string DecryptData(string secretKey, string iv, string encryptedData)
-    {
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
-        byte[] ivBytes = Convert.FromBase64String(iv);
-
-        string parsed = encryptedData.Split('$')[2];
-        byte[] parsedBytes = Convert.FromBase64String(parsed);
-
-        byte[] encrypted = new byte[parsedBytes.Length - 16];
-        Buffer.BlockCopy(parsedBytes, 0, encrypted, 0, parsedBytes.Length - 16);
-
-        byte[] decrypted = new byte[parsedBytes.Length - 16];
-        byte[] tag = new byte[16];
-        Buffer.BlockCopy(parsedBytes, parsedBytes.Length - 16, tag, 0, 16);
-
-        using var aesCipher = new AesGcm(secretKeyBytes);
-        aesCipher.Decrypt(ivBytes, encrypted, tag, decrypted, secretKeyBytes);
-
-        return Encoding.UTF8.GetString(decrypted);
     }
 }
