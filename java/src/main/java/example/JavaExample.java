@@ -69,8 +69,8 @@ public class JavaExample {
         Cipher rsaCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
         rsaCipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
-        byte[] bytePlain = rsaCipher.doFinal(sessionAesKey.getBytes());
-        return Base64.encodeBase64String(bytePlain);
+        byte[] encrypted = rsaCipher.doFinal(sessionAesKey.getBytes());
+        return Base64.encodeBase64String(encrypted);
     }
 
     public static String encryptData(String sessionId, String secretKey, String iv, String data) throws Exception {

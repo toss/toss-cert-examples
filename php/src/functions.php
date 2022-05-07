@@ -35,8 +35,8 @@ function encryptSessionAesKey(string $base64PublicKey, string $sessionAesKey): s
         ->withHash('sha1')
         ->withMGFHash('sha1');
 
-    $bytePlain = $rsa->encrypt($sessionAesKey);
-    return base64_encode($bytePlain);
+    $encrypted = $rsa->encrypt($sessionAesKey);
+    return base64_encode($encrypted);
 }
 
 function encryptData(string $sessionId, string $secretKey, string $iv, string $data): string
