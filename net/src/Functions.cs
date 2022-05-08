@@ -56,15 +56,14 @@ public class Functions
         byte[] parsedBytes = Convert.FromBase64String(parsed);
 
         byte[] encrypted = new byte[parsedBytes.Length - 16];
-        Buffer.BlockCopy(parsedBytes, 0, encrypted, 0, parsedBytes.Length - 16);
-
         byte[] decrypted = new byte[parsedBytes.Length - 16];
+        Buffer.BlockCopy(parsedBytes, 0, encrypted, 0, parsedBytes.Length - 16);
+        
         byte[] tag = new byte[16];
         Buffer.BlockCopy(parsedBytes, parsedBytes.Length - 16, tag, 0, 16);
 
         using var cipher = new AesGcm(secretKeyBytes);
         cipher.Decrypt(ivBytes, encrypted, tag, decrypted, secretKeyBytes);
-
         return Encoding.UTF8.GetString(decrypted);
     }
 }

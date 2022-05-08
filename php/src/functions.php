@@ -46,19 +46,22 @@ function encryptData(string $sessionId, string $secretKey, string $iv, string $d
     $cipher->setNonce(base64_decode($iv));
     $cipher->setAAD(base64_decode($secretKey));
 
-    $encrypted = base64_encode($cipher->encrypt($data) . $cipher->getTag());
-    return 'v1$' . $sessionId . '$' . $encrypted;
+    $encrypted = $cipher->encrypt($data);
+    $combined = base64_encode($encrypted . $cipher->getTag());
+    return 'v1$' . $sessionId . '$' . $combined;
 }
 
 function decryptData(string $secretKey, string $iv, string $encryptedData): string
 {
     $parsed = base64_decode(explode('$', $encryptedData)[2]);
+    $encrypted = substr($parsed, 0, strlen($parsed) - 16);
+    $tag = substr($parsed, strlen($parsed) - 16);
 
     $cipher = new AES('gcm');
     $cipher->setKey(base64_decode($secretKey));
     $cipher->setNonce(base64_decode($iv));
     $cipher->setAAD(base64_decode($secretKey));
-    $cipher->setTag(substr($parsed, strlen($parsed) - 16));
+    $cipher->setTag($tag);
 
-    return $cipher->decrypt(substr($parsed, 0, strlen($parsed) - 16));
+    return $cipher->decrypt($encrypted);
 }
