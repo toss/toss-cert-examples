@@ -1,0 +1,8 @@
+{
+  "name": "toss-cert-examples-nodejs",
+  "version": "1.0.0",
+  "main": "src/nodejs_example.js",
+  "scripts": {
+    "start": "npm start"
+  }
+}
