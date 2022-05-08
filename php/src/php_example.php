@@ -3,6 +3,7 @@
 include "functions.php";
 
 /* ------------------------------ 1. 암복호화 키 생성 --------------------------- */
+
 $sessionId = uuid();
 $secretKey = generateRandomBytes(256);
 $iv = generateRandomBytes(96);

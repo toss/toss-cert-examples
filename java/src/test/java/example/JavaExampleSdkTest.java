@@ -8,10 +8,10 @@ import org.junit.jupiter.api.RepeatedTest;
 import java.util.Objects;
 import java.util.Random;
 
-import static example.JavaExample.*;
+import static example.Functions.*;
+import static example.JavaExampleTest.decryptSessionKey;
 import static example.TestData.TEST_BASE64_PRIVATE_KEY;
 import static example.TestData.TEST_BASE64_PUBLIC_KEY;
-import static example.TestUtils.decryptSessionKey;
 
 public class JavaExampleSdkTest {
     private static final TossCertSessionGenerator SESSION_GENERATOR = new TossCertSessionGenerator(TEST_BASE64_PUBLIC_KEY);
