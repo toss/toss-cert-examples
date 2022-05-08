@@ -29,10 +29,10 @@ public class Functions {
     public static String encryptSessionAesKey(String base64PublicKey, String sessionAesKey) throws Exception {
         PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(Base64.decodeBase64(base64PublicKey)));
 
-        Cipher rsaCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
-        rsaCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
-        byte[] encrypted = rsaCipher.doFinal(sessionAesKey.getBytes());
+        byte[] encrypted = cipher.doFinal(sessionAesKey.getBytes());
         return Base64.encodeBase64String(encrypted);
     }
 
@@ -40,11 +40,11 @@ public class Functions {
         SecretKeySpec secretKeySpec = new SecretKeySpec(Base64.decodeBase64(secretKey), "AES");
         AlgorithmParameterSpec ivSpec = new GCMParameterSpec(16 * Byte.SIZE, Base64.decodeBase64(iv));
 
-        Cipher aesCipher = Cipher.getInstance("AES/GCM/NoPadding");
-        aesCipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
-        aesCipher.updateAAD(secretKeySpec.getEncoded());
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
+        cipher.updateAAD(secretKeySpec.getEncoded());
 
-        byte[] encrypted = aesCipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
+        byte[] encrypted = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
         return "v1$" + sessionId + "$" + Base64.encodeBase64String(encrypted);
     }
 
@@ -54,11 +54,11 @@ public class Functions {
         SecretKeySpec secretKeySpec = new SecretKeySpec(Base64.decodeBase64(secretKey), "AES");
         AlgorithmParameterSpec ivSpec = new GCMParameterSpec(16 * Byte.SIZE, Base64.decodeBase64(iv));
 
-        Cipher aesCipher = Cipher.getInstance("AES/GCM/NoPadding");
-        aesCipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
-        aesCipher.updateAAD(secretKeySpec.getEncoded());
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
+        cipher.updateAAD(secretKeySpec.getEncoded());
 
-        byte[] decrypted = aesCipher.doFinal(Base64.decodeBase64(parsed));
+        byte[] decrypted = cipher.doFinal(Base64.decodeBase64(parsed));
         return new String(decrypted, StandardCharsets.UTF_8);
     }
 }

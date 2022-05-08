@@ -21,10 +21,10 @@ public class Functions
 
     public static string EncryptSessionAesKey(string base64PublicKey, string sessionAesKey)
     {
-        var rsaCipher = new RSACryptoServiceProvider();
-        rsaCipher.ImportSubjectPublicKeyInfo(Convert.FromBase64String(base64PublicKey), out _);
+        var cipher = new RSACryptoServiceProvider();
+        cipher.ImportSubjectPublicKeyInfo(Convert.FromBase64String(base64PublicKey), out _);
 
-        byte[] encrypted = rsaCipher.Encrypt(Encoding.UTF8.GetBytes(sessionAesKey), RSAEncryptionPadding.OaepSHA1);
+        byte[] encrypted = cipher.Encrypt(Encoding.UTF8.GetBytes(sessionAesKey), RSAEncryptionPadding.OaepSHA1);
         return Convert.ToBase64String(encrypted);
     }
 
@@ -37,8 +37,8 @@ public class Functions
         byte[] encrypted = new byte[dataBytes.Length];
         byte[] tag = new byte[16];
 
-        using var aesCipher = new AesGcm(secretKeyBytes);
-        aesCipher.Encrypt(ivBytes, dataBytes, encrypted, tag, secretKeyBytes);
+        using var cipher = new AesGcm(secretKeyBytes);
+        cipher.Encrypt(ivBytes, dataBytes, encrypted, tag, secretKeyBytes);
 
         byte[] combined = new byte[encrypted.Length + tag.Length];
         Buffer.BlockCopy(encrypted, 0, combined, 0, encrypted.Length);
@@ -62,8 +62,8 @@ public class Functions
         byte[] tag = new byte[16];
         Buffer.BlockCopy(parsedBytes, parsedBytes.Length - 16, tag, 0, 16);
 
-        using var aesCipher = new AesGcm(secretKeyBytes);
-        aesCipher.Decrypt(ivBytes, encrypted, tag, decrypted, secretKeyBytes);
+        using var cipher = new AesGcm(secretKeyBytes);
+        cipher.Decrypt(ivBytes, encrypted, tag, decrypted, secretKeyBytes);
 
         return Encoding.UTF8.GetString(decrypted);
     }

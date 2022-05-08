@@ -80,10 +80,10 @@ class NetExampleTest
 
     public static string DecryptSessionKey(string base64PrivateKey, string sessionKey)
     {
-        var rsaCipher = new RSACryptoServiceProvider();
-        rsaCipher.ImportPkcs8PrivateKey(Convert.FromBase64String(base64PrivateKey), out _);
+        var cipher = new RSACryptoServiceProvider();
+        cipher.ImportPkcs8PrivateKey(Convert.FromBase64String(base64PrivateKey), out _);
 
-        byte[] decrypted = rsaCipher.Decrypt(Convert.FromBase64String(sessionKey), RSAEncryptionPadding.OaepSHA1);
+        byte[] decrypted = cipher.Decrypt(Convert.FromBase64String(sessionKey), RSAEncryptionPadding.OaepSHA1);
         return Encoding.UTF8.GetString(decrypted);
     }
 }

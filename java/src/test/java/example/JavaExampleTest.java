@@ -67,11 +67,12 @@ public class JavaExampleTest {
     }
 
     public static String decryptSessionKey(String base64PrivateKey, String sessionKey) throws Exception {
-        byte[] decodedBase64PvtKey = Base64.decodeBase64(base64PrivateKey);
-        PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(decodedBase64PvtKey));
-        Cipher rsaCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
-        rsaCipher.init(Cipher.DECRYPT_MODE, privateKey);
-        byte[] decrypted = rsaCipher.doFinal(Base64.decodeBase64(sessionKey.getBytes()));
+        PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(Base64.decodeBase64(base64PrivateKey)));
+
+        Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+        byte[] decrypted = cipher.doFinal(Base64.decodeBase64(sessionKey.getBytes()));
         return new String(decrypted, StandardCharsets.UTF_8);
     }
 }
