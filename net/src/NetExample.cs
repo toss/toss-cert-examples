@@ -8,7 +8,7 @@ class NetExample
     {
         /* ------------------------------ 1. 암복호화 키 생성 --------------------------- */
 
-        string sessionId = Guid.NewGuid().ToString();
+        string sessionId = GenerateSessionId();
         string secretKey = GenerateRandomBytes(256);
         string iv = GenerateRandomBytes(96);
 

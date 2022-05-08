@@ -11,8 +11,13 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.UUID;
 
 public class Functions {
+
+    public static String generateSessionId() {
+        return UUID.randomUUID().toString();
+    }
 
     public static String generateRandomBytes(int lengthInBits) {
         byte[] bytes = new byte[lengthInBits / 8];

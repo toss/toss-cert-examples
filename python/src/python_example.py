@@ -1,10 +1,8 @@
-import uuid
-
 from src.functions import *
 
 """ ------------------------------ 1. 암복호화 키 생성 --------------------------- """
 
-session_id = str(uuid.uuid4())
+session_id = generate_session_id()
 secret_key = generate_random_bytes(256)
 iv = generate_random_bytes(96)
 

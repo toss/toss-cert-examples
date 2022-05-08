@@ -6,7 +6,7 @@ use phpseclib3\Crypt\AES;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 
-function uuid(): string
+function generateSessionId(): string
 {
     $data = random_bytes(16);
 

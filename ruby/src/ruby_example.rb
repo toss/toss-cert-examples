@@ -1,9 +1,8 @@
-require 'securerandom'
 require_relative 'functions'
 
 # ------------------------------ 1. 암복호화 키 생성 --------------------------- #
 
-session_id = SecureRandom.uuid
+session_id = generate_session_id
 secret_key = generate_random_bytes(256)
 iv = generate_random_bytes(96)
 

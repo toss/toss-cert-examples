@@ -1,4 +1,5 @@
 import secrets
+import uuid
 
 from base64 import b64encode, b64decode
 from Crypto.Cipher import AES, PKCS1_OAEP
@@ -7,6 +8,10 @@ from Crypto.PublicKey import RSA
 
 def b64encode_string(b):
     return b64encode(b).decode('utf-8')
+
+
+def generate_session_id():
+    return str(uuid.uuid4())
 
 
 def generate_random_bytes(length_in_bits):

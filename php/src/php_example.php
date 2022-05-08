@@ -1,10 +1,10 @@
 <?php
 
-include "functions.php";
+require_once "functions.php";
 
 /* ------------------------------ 1. 암복호화 키 생성 --------------------------- */
 
-$sessionId = uuid();
+$sessionId = generateSessionId();
 $secretKey = generateRandomBytes(256);
 $iv = generateRandomBytes(96);
 

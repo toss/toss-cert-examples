@@ -1,5 +1,10 @@
 require 'base64'
 require 'openssl'
+require 'securerandom'
+
+def generate_session_id
+  SecureRandom.uuid
+end
 
 def generate_random_bytes(length_in_bits)
   Base64.strict_encode64(SecureRandom.random_bytes(length_in_bits / 8))

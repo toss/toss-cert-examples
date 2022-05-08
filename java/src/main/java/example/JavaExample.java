@@ -1,7 +1,5 @@
 package example;
 
-import java.util.UUID;
-
 import static example.Functions.*;
 
 public class JavaExample {
@@ -9,7 +7,7 @@ public class JavaExample {
     public static void main(String[] args) throws Exception {
         /* ------------------------------ 1. 암복호화 키 생성 --------------------------- */
 
-        String sessionId = UUID.randomUUID().toString();
+        String sessionId = generateSessionId();
         String secretKey = generateRandomBytes(256);
         String iv = generateRandomBytes(96);
 

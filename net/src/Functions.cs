@@ -4,6 +4,11 @@ using System.Text;
 
 public class Functions
 {
+    public static string GenerateSessionId()
+    {
+        return Guid.NewGuid().ToString();
+    }
+
     public static string GenerateRandomBytes(int lengthInBits)
     {
         byte[] random = new byte[lengthInBits / 8];
@@ -58,7 +63,7 @@ public class Functions
         byte[] encrypted = new byte[parsedBytes.Length - 16];
         byte[] decrypted = new byte[parsedBytes.Length - 16];
         Buffer.BlockCopy(parsedBytes, 0, encrypted, 0, parsedBytes.Length - 16);
-        
+
         byte[] tag = new byte[16];
         Buffer.BlockCopy(parsedBytes, parsedBytes.Length - 16, tag, 0, 16);
 
