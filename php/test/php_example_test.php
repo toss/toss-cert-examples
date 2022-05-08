@@ -44,7 +44,7 @@ function testGenerateSessionKey()
         $iv = $data[2];
         $sessionKey = $data[3];
         $generatedSessionKey = generateSessionKey($sessionId, $secretKey, $iv, $TEST_BASE64_PUBLIC_KEY);
-        $decryptedSessionKey = decryptSessionKey($TEST_BASE64_PRIVATE_KEY, explode('$', $sessionKey)[2]);
+        $decryptedSessionKey = decryptSessionKey($TEST_BASE64_PRIVATE_KEY, explode('$', $generatedSessionKey)[2]);
 
         echo $generatedSessionKey . "\n";
         echo $decryptedSessionKey . "\n";

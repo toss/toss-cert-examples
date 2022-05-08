@@ -37,7 +37,7 @@ class NetExampleTest
             var iv = RSA_TEST_DATA[i, 2];
             var sessionKey = RSA_TEST_DATA[i, 3];
             var generatedSessionKey = GenerateSessionKey(sessionId, secretKey, iv, TEST_BASE64_PUBLIC_KEY);
-            var decryptedSessionKey = DecryptSessionKey(TEST_BASE64_PRIVATE_KEY, sessionKey.Split('$')[2]);
+            var decryptedSessionKey = DecryptSessionKey(TEST_BASE64_PRIVATE_KEY, generatedSessionKey.Split('$')[2]);
 
             Console.WriteLine(generatedSessionKey);
             Console.WriteLine(decryptedSessionKey);
