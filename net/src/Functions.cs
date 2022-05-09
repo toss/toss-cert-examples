@@ -9,9 +9,9 @@ public class Functions
         return Guid.NewGuid().ToString();
     }
 
-    public static string GenerateRandomBytes(int lengthInBits)
+    public static string GenerateRandomBytes(int length)
     {
-        byte[] random = new byte[lengthInBits / 8];
+        byte[] random = new byte[length];
         using var randomGenerator = new RNGCryptoServiceProvider();
         randomGenerator.GetNonZeroBytes(random);
         return Convert.ToBase64String(random);

@@ -9,8 +9,8 @@ class NetExample
         /* ------------------------------ 1. 암복호화 키 생성 --------------------------- */
 
         string sessionId = GenerateSessionId();
-        string secretKey = GenerateRandomBytes(256);
-        string iv = GenerateRandomBytes(96);
+        string secretKey = GenerateRandomBytes(32);
+        string iv = GenerateRandomBytes(12);
 
         /* ------------------------------ 2. 세션키 생성 ------------------------------- */
 

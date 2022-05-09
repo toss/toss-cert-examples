@@ -4,8 +4,8 @@ const f = require('./functions')
 /* ------------------------------ 1. 암복호화 키 생성 --------------------------- */
 
 let sessionId = crypto.randomUUID()
-let secretKey = f.generateRandomBytes(256)
-let iv = f.generateRandomBytes(96)
+let secretKey = f.generateRandomBytes(32)
+let iv = f.generateRandomBytes(12)
 
 /* ------------------------------ 2. 세션키 생성 ------------------------------- */
 

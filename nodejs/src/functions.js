@@ -1,8 +1,8 @@
 const crypto = require('crypto')
 
 module.exports = {
-    generateRandomBytes: function (lengthInBits) {
-        return crypto.randomBytes(lengthInBits / 8).toString('base64')
+    generateRandomBytes: function (length) {
+        return crypto.randomBytes(length).toString('base64')
     },
 
     generateSessionKey: function (sessionId, secretKey, iv, base64PublicKey) {

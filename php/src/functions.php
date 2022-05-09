@@ -16,9 +16,9 @@ function generateSessionId(): string
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }
 
-function generateRandomBytes(int $lengthInBits): string
+function generateRandomBytes(int $length): string
 {
-    return base64_encode(random_bytes($lengthInBits / 8));
+    return base64_encode(random_bytes($length));
 }
 
 function generateSessionKey(string $sessionId, string $secretKey, string $iv, string $base64PublicKey): string

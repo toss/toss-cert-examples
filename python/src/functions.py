@@ -14,8 +14,8 @@ def generate_session_id():
     return str(uuid.uuid4())
 
 
-def generate_random_bytes(length_in_bits):
-    return b64encode_string(secrets.token_bytes(int(length_in_bits / 8)))
+def generate_random_bytes(length):
+    return b64encode_string(secrets.token_bytes(length))
 
 
 def generate_session_key(session_id, secret_key, iv, base64_public_key):

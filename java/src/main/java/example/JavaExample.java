@@ -8,8 +8,8 @@ public class JavaExample {
         /* ------------------------------ 1. 암복호화 키 생성 --------------------------- */
 
         String sessionId = generateSessionId();
-        String secretKey = generateRandomBytes(256);
-        String iv = generateRandomBytes(96);
+        String secretKey = generateRandomBytes(32);
+        String iv = generateRandomBytes(12);
 
         /* ------------------------------ 2. 세션키 생성 ------------------------------- */
 

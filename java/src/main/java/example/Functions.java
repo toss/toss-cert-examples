@@ -19,8 +19,8 @@ public class Functions {
         return UUID.randomUUID().toString();
     }
 
-    public static String generateRandomBytes(int lengthInBits) {
-        byte[] bytes = new byte[lengthInBits / 8];
+    public static String generateRandomBytes(int length) {
+        byte[] bytes = new byte[length];
         new SecureRandom().nextBytes(bytes);
         return Base64.encodeBase64String(bytes);
     }
