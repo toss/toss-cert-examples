@@ -6,7 +6,7 @@ use phpseclib3\Crypt\AES;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 
-function uuid(): string
+function generateSessionId(): string
 {
     $data = random_bytes(16);
 
@@ -16,9 +16,9 @@ function uuid(): string
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }
 
-function generateKey(int $aesKeyBitLength): string
+function generateRandomBytes(int $length): string
 {
-    return base64_encode(random_bytes($aesKeyBitLength / 8));
+    return base64_encode(random_bytes($length));
 }
 
 function generateSessionKey(string $sessionId, string $secretKey, string $iv, string $base64PublicKey): string
@@ -32,11 +32,11 @@ function encryptSessionAesKey(string $base64PublicKey, string $sessionAesKey): s
 {
     $rsa = PublicKeyLoader::load($base64PublicKey)
         ->withPadding(RSA::ENCRYPTION_OAEP)
-        ->withHash('sha256')
+        ->withHash('sha1')
         ->withMGFHash('sha1');
 
-    $bytePlain = $rsa->encrypt($sessionAesKey);
-    return base64_encode($bytePlain);
+    $encrypted = $rsa->encrypt($sessionAesKey);
+    return base64_encode($encrypted);
 }
 
 function encryptData(string $sessionId, string $secretKey, string $iv, string $data): string
@@ -46,19 +46,22 @@ function encryptData(string $sessionId, string $secretKey, string $iv, string $d
     $cipher->setNonce(base64_decode($iv));
     $cipher->setAAD(base64_decode($secretKey));
 
-    $encrypted = base64_encode($cipher->encrypt($data) . $cipher->getTag());
-    return 'v1$' . $sessionId . '$' . $encrypted;
+    $encrypted = $cipher->encrypt($data);
+    $combined = base64_encode($encrypted . $cipher->getTag());
+    return 'v1$' . $sessionId . '$' . $combined;
 }
 
 function decryptData(string $secretKey, string $iv, string $encryptedData): string
 {
     $parsed = base64_decode(explode('$', $encryptedData)[2]);
+    $encrypted = substr($parsed, 0, strlen($parsed) - 16);
+    $tag = substr($parsed, strlen($parsed) - 16);
 
     $cipher = new AES('gcm');
     $cipher->setKey(base64_decode($secretKey));
     $cipher->setNonce(base64_decode($iv));
     $cipher->setAAD(base64_decode($secretKey));
-    $cipher->setTag(substr($parsed, strlen($parsed) - 16));
+    $cipher->setTag($tag);
 
-    return $cipher->decrypt(substr($parsed, 0, strlen($parsed) - 16));
+    return $cipher->decrypt($encrypted);
 }

@@ -1,11 +1,17 @@
 package example;
 
+import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static example.JavaExample.*;
+import javax.crypto.Cipher;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+
+import static example.Functions.*;
 import static example.TestData.*;
-import static example.TestUtils.decryptSessionKey;
 
 public class JavaExampleTest {
 
@@ -58,5 +64,15 @@ public class JavaExampleTest {
             Assertions.assertEquals(encrypted, encryptedData);
             Assertions.assertEquals(plain, decryptedData);
         }
+    }
+
+    public static String decryptSessionKey(String base64PrivateKey, String sessionKey) throws Exception {
+        PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(Base64.decodeBase64(base64PrivateKey)));
+
+        Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+        byte[] decrypted = cipher.doFinal(Base64.decodeBase64(sessionKey.getBytes()));
+        return new String(decrypted, StandardCharsets.UTF_8);
     }
 }
