@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Security.Cryptography;
 using System.Text;
-using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto;
@@ -28,7 +27,7 @@ public class Functions
 
     public static string GenerateSessionKey(string sessionId, string secretKey, string iv, string base64PublicKey)
     {
-        string sessionAesKey = "AES_GCM$" + secretKey + "$" + iv;
+        string sessionAesKey = "AES_CBC$" + secretKey + "$" + iv;
         string encryptedSessionAesKey = EncryptSessionAesKey(base64PublicKey, sessionAesKey);
         return "v1$" + sessionId + "$" + encryptedSessionAesKey;
     }
@@ -49,14 +48,13 @@ public class Functions
         byte[] ivBytes = Convert.FromBase64String(iv);
         byte[] dataBytes = Encoding.UTF8.GetBytes(data);
 
-        var aead = new GcmBlockCipher(new AesEngine());
-        var parameters = new AeadParameters(new KeyParameter(secretKeyBytes), 128, ivBytes);
-        aead.Init(true, parameters);
-        byte[] encrypted = new byte[aead.GetOutputSize(dataBytes.Length)];
-        int len = aead.ProcessBytes(dataBytes, 0, dataBytes.Length, encrypted, 0);
-        aead.DoFinal(encrypted, len);
+        var cipher = CipherUtilities.GetCipher("AES/CBC/PKCS5Padding");
+        var parameters = new ParametersWithIV(new KeyParameter(secretKeyBytes), ivBytes);
+        cipher.Init(true, parameters);
+        var cipherText = cipher.DoFinal(dataBytes);
+        var hmacHex = HmacHash(secretKeyBytes, dataBytes);
 
-        return "v1$" + sessionId + "$" + Convert.ToBase64String(encrypted);
+        return "v1$" + sessionId + "$" + Convert.ToBase64String(cipherText) + "$" + hmacHex;
     }
 
     public static string DecryptData(string secretKey, string iv, string encryptedData)
@@ -66,13 +64,23 @@ public class Functions
 
         string parsed = encryptedData.Split('$')[2];
         byte[] parsedBytes = Convert.FromBase64String(parsed);
+        string hmac = encryptedData.Split('$')[3];
 
-        var aead = new GcmBlockCipher(new AesEngine());
-        var parameters = new AeadParameters(new KeyParameter(secretKeyBytes), 128, ivBytes);
-        aead.Init(false, parameters);
-        byte[] decrypted = new byte[aead.GetOutputSize(parsedBytes.Length)];
-        var decLen = aead.ProcessBytes(parsedBytes, 0, parsedBytes.Length, decrypted, 0);
-        aead.DoFinal(decrypted, decLen);
+        var cipher = CipherUtilities.GetCipher("AES/CBC/PKCS5Padding");
+        var parameters = new ParametersWithIV(new KeyParameter(secretKeyBytes), ivBytes);
+        cipher.Init(false, parameters);
+        var decrypted = cipher.DoFinal(parsedBytes);
+        var hmacHex = HmacHash(secretKeyBytes, decrypted);
+        if (hmac != hmacHex) throw new ArgumentException("HMAC 결과가 일치하지 않습니다.");
         return Encoding.UTF8.GetString(decrypted);
+    }
+
+    private static string HmacHash(byte[] secretKeyBytes, byte[] dataBytes)
+    {
+        using (var hmacsha256 = new HMACSHA256(secretKeyBytes))
+        {
+            var hash = hmacsha256.ComputeHash(dataBytes);
+            return BitConverter.ToString(hash).Replace("-", string.Empty);
+        }
     }
 }
