@@ -10,7 +10,7 @@ class NetExample
 
         string sessionId = GenerateSessionId();
         string secretKey = GenerateRandomBytes(32);
-        string iv = GenerateRandomBytes(12);
+        string iv = GenerateRandomBytes(16);
 
         /* ------------------------------ 2. 세션키 생성 ------------------------------- */
 
